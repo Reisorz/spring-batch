@@ -43,7 +43,9 @@ public class ImportProductsBatchConfig{
     private final CustomSkipPolicy customSkipPolicy;
     private final FlowDecision flowDecision;
 
-    public ImportProductsBatchConfig(JobRepository jobRepository, PlatformTransactionManager transactionManager, ReaderListener readerListenerStep1, ProductRepository productRepository, WriterListener writerListenerStep1, CustomSkipPolicy customSkipPolicy, FlowDecision flowDecision) {
+    public ImportProductsBatchConfig(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+                                     ReaderListener readerListenerStep1, ProductRepository productRepository,
+                                     WriterListener writerListenerStep1, CustomSkipPolicy customSkipPolicy, FlowDecision flowDecision) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.readerListenerStep1 = readerListenerStep1;
@@ -89,7 +91,9 @@ public class ImportProductsBatchConfig{
     @Bean
     public ItemProcessor<Product, Product> processorStep1(){
         return product -> {
-
+            System.out.println("Procesando Product: id=" + product.getId()
+                    + " name=" + product.getName()
+                    + " price=" + product.getPrice());
             return product;
         };
     }
@@ -111,8 +115,9 @@ public class ImportProductsBatchConfig{
 
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
         tokenizer.setDelimiter(",");
-        tokenizer.setStrict(true);
-        tokenizer.setNames( "id", "name", "price", "launchDate", "isReconditioned");
+        tokenizer.setStrict(false);
+        tokenizer.setNames("name", "price");
+        tokenizer.setQuoteCharacter(DelimitedLineTokenizer.DEFAULT_QUOTE_CHARACTER);
         lineMapper.setLineTokenizer(tokenizer);
 
         BeanWrapperFieldSetMapper<Product> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
